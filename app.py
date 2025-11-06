@@ -8,7 +8,7 @@ from elasticsearch import Elasticsearch
 # 기본 설정
 # -----------------------------
 st.set_page_config(
-    page_title="강사사의 AI 위키 검색기",
+    page_title="춘사마의 AI 위키 검색기",
     page_icon="🤖",
     layout="wide"
 )
