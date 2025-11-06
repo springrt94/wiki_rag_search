@@ -8,80 +8,80 @@ from elasticsearch import Elasticsearch
 # 기본 설정
 # -----------------------------
 st.set_page_config(
-    page_title="춘사마마의 AI 위키 검색기",
-    page_icon="📘",
+    page_title="강사사의 AI 위키 검색기",
+    page_icon="🤖",
     layout="wide"
 )
 
 # -----------------------------
-# 커스텀 CSS (세련되고 화려하게)
+# 스타일 커스터마이징
 # -----------------------------
 st.markdown("""
     <style>
     body {
-        background: linear-gradient(135deg, #eef2ff, #e0f2fe);
-        color: #1e293b;
+        background: radial-gradient(circle at top left, #0f172a, #1e293b, #0f172a);
+        color: #e2e8f0;
         font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     }
     .main-title {
         text-align: center;
-        color: #1e3a8a;
-        font-size: 2.8rem;
+        font-size: 3rem;
         font-weight: 800;
+        background: linear-gradient(90deg, #38bdf8, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -1px;
         margin-top: -10px;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
     }
     .sub-title {
         text-align: center;
-        color: #334155;
-        font-size: 1.1rem;
-        margin-bottom: 30px;
-    }
-    .stButton>button {
-        background: linear-gradient(90deg, #2563eb, #1e40af);
-        color: white;
-        font-weight: 600;
-        border: none;
-        border-radius: 8px;
-        padding: 0.6em 1.2em;
-        box-shadow: 0 4px 8px rgba(37,99,235,0.3);
-        transition: all 0.2s ease;
-    }
-    .stButton>button:hover {
-        background: linear-gradient(90deg, #1e40af, #1d4ed8);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 14px rgba(37,99,235,0.4);
+        color: #94a3b8;
+        font-size: 1.2rem;
+        margin-bottom: 40px;
     }
     .result-card {
-        background: white;
-        border-radius: 12px;
+        background: linear-gradient(145deg, #1e293b, #0f172a);
+        border-radius: 16px;
         padding: 25px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        border-left: 5px solid #2563eb;
-        animation: fadeIn 0.5s ease-in-out;
+        box-shadow: 0 4px 20px rgba(56,189,248,0.15);
+        color: #e2e8f0;
+        font-size: 1rem;
+        line-height: 1.6;
+        transition: transform 0.3s ease;
+    }
+    .result-card:hover {
+        transform: scale(1.01);
+        box-shadow: 0 8px 25px rgba(99,102,241,0.3);
     }
     .wiki-card {
-        background: #f8fafc;
-        border-radius: 10px;
-        padding: 12px 15px;
-        margin-bottom: 8px;
-        transition: all 0.2s ease;
-        border: 1px solid #e2e8f0;
+        background: rgba(255,255,255,0.05);
+        border-left: 4px solid #38bdf8;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
     }
-    .wiki-card:hover {
-        background: #eff6ff;
-        transform: translateY(-2px);
-        box-shadow: 0 2px 6px rgba(59,130,246,0.2);
+    .stButton>button {
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding: 0.6em 1.4em;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 4px 15px rgba(99,102,241,0.4);
+    }
+    .stButton>button:hover {
+        background: linear-gradient(90deg, #8b5cf6, #6366f1);
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(139,92,246,0.6);
     }
     .footer {
-        color: #94a3b8;
+        color: #64748b;
         font-size: 0.85rem;
         text-align: center;
         margin-top: 40px;
-    }
-    @keyframes fadeIn {
-        from {opacity: 0; transform: translateY(10px);}
-        to {opacity: 1; transform: translateY(0);}
     }
     </style>
 """, unsafe_allow_html=True)
@@ -98,7 +98,6 @@ es = Elasticsearch(
     api_key=ELASTIC_API_KEY
 )
 
-# 연결 테스트
 try:
     es.info()
 except Exception as e:
@@ -106,29 +105,69 @@ except Exception as e:
     st.stop()
 
 # -----------------------------
-# 헤더
+# 헤더 섹션
 # -----------------------------
-st.markdown("<h1 class='main-title'>📘 한글로 답변하는 영문 위키 기반 AI</h1>", unsafe_allow_html=True)
-st.markdown("<p class='sub-title'>Semantic Search + RAG 기반 | Powered by Elasticsearch & OpenAI</p>", unsafe_allow_html=True)
+st.markdown("<h1 class='main-title'>🤖 AI 위키 검색 어시스턴트</h1>", unsafe_allow_html=True)
+st.markdown("<p class='sub-title'>한글 질문 → 영어 위키 기반 의미검색 + RAG 응답 시스템</p>", unsafe_allow_html=True)
 st.divider()
 
 # -----------------------------
-# 소개 섹션
-# -----------------------------
-with st.expander("📄 서비스 소개", expanded=False):
-    st.caption("""
-    이 서비스는 **영문 위키피디아 데이터셋(25,000건)**을 기반으로  
-    한국어 질문을 **의미 검색(Semantic Search)** 및 **RAG(Retrieval-Augmented Generation)** 기술로 분석하여  
-    가장 관련 있는 문서를 찾아 **한글로 답변**을 생성합니다.
-
-    **예시 질문**
-    - 🌊 대서양은 몇 번째로 큰 바다인가?
-    - 🏙 대한민국의 수도는?
-    - 🚗 도요타에서 가장 많이 팔리는 차는?
-    """)
-
-# -----------------------------
-# 질문 입력
+# 질문 입력 섹션
 # -----------------------------
 st.markdown("### 💬 질문을 입력하세요")
-question = st.text_inp_
+question = st.text_input("Prompt", placeholder="예: 대서양은 몇 번째로 큰 바다인가?")
+submit = st.button("🚀 AI에게 물어보기")
+
+# -----------------------------
+# 처리 로직
+# -----------------------------
+if submit and question:
+    with st.spinner("🤖 Kevin AI가 답변을 생성 중입니다..."):
+        try:
+            translation = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": f"Translate this Korean question into English: {question}"}]
+            ).choices[0].message.content.strip()
+
+            embedding = client.embeddings.create(
+                input=[translation],
+                model="text-embedding-ada-002"
+            ).data[0].embedding
+
+            response = es.search(
+                index="wikipedia_vector_index",
+                knn={
+                    "field": "content_vector",
+                    "query_vector": embedding,
+                    "k": 5,
+                    "num_candidates": 50
+                }
+            )
+
+            top_hit = response['hits']['hits'][0]['_source']
+            summary = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are an assistant that answers in Korean based on the given context."},
+                    {"role": "user", "content": f"질문: {question}\n\n참고 문서: {top_hit['text']}"}
+                ]
+            )
+
+            st.divider()
+            st.markdown("### 🧠 AI의 답변")
+            st.markdown(f"<div class='result-card'>{summary.choices[0].message.content}</div>", unsafe_allow_html=True)
+
+            st.markdown("### 🔍 참고 문서 목록")
+            for hit in response['hits']['hits']:
+                title = hit['_source']['title']
+                url = hit['_source']['url']
+                score = round(hit['_score'], 2)
+                st.markdown(f"<div class='wiki-card'>🔗 <a href='{url}' target='_blank'>{title}</a> — 점수: {score}</div>", unsafe_allow_html=True)
+
+        except Exception as e:
+            st.error(f"⚠️ 오류 발생: {e}")
+
+# -----------------------------
+# Footer
+# -----------------------------
+st.markdown("<div class='footer'>© 2025 Kevin AI | Powered by OpenAI & Elasticsearch | Designed with 💎 by Streamlit</div>", unsafe_allow_html=True)
